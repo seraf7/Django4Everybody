@@ -16,8 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+# Biblioteca para funcionalidades del SO
+import os
+# Biblioteca para definición de URL
+from django.conf.urls import url
+# Biblioteca para manejo de archivos estáticos
+from django.views.static import serve
+
+# Se define la ruta del directorio base
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Se define el sitio raíz, del directorio site
+SITE_ROOT = os.path.join(BASE_DIR, 'site')
+
 urlpatterns = [
     # Se define la dirección de las vistas
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
+    # Definición de una nueva URL para el directorio site
+    url(r'^site/(?P<path>.*)$', serve,
+        {'document_root': SITE_ROOT, 'show_indexes': True},
+        name = 'site_path'),
 ]
