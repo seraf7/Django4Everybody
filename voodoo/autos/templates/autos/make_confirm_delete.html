@@ -1,0 +1,17 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+    <h1>Borrar Fabricantes</h1>
+
+    <p>¿Estas seguro de borrar al fabricante {{ make }}?</p>
+
+    <!--Crea un nuevo formulario -->
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes, delete.">
+        <input type="submit" value="Cancel"
+            onclick="window.location='{% url 'autos:all' %}' ; return false;">
+    </form>
+
+{% endblock content %}

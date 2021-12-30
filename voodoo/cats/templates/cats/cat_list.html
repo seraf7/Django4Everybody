@@ -1,0 +1,45 @@
+{% extends 'base_bootstrap.html' %}
+
+
+{% block content %}
+    <h1>Lista de gatos</h1>
+
+    <!-- Valida si hay gatos registrados -->
+    {% if cat_list %}
+        <ul>
+            <!-- Ciclo para imprimir gatos -->
+            {% for cat in cat_list %}
+                <li>
+                    {{ cat.nickname }} ({{ cat.breed }})
+                    (<a href="{% url 'cats:cat_update' cat.id %}">Update</a> |
+                    <a href="{% url 'cats:cat_delete' cat.id %}">Delete</a>) <br>
+                    {{ cat.weight }} pounds <br>
+                    Meals: {{ cat.foods }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>
+            No hay gatos registrados
+        </p>
+    {% endif %}
+
+    <p>
+        <!-- Valida que hay razas registradas -->
+        {% if breed_count > 0 %}
+            <a href="{% url 'cats:cat_create' %}">Add a cat</a>
+        {% else %}
+            Añade una raza antes de añadir un gato
+        {% endif %}
+    </p>
+
+    <!-- Enlaces a funciones de razas -->
+    <p>
+        <a href="{% url 'cats:breed_list' %}">
+            View breeds
+        </a> ({{ breed_count }}) |
+        <a href="{% url 'cats:breed_create' %}">
+            Add a breed
+        </a>
+    </p>
+{% endblock content %}

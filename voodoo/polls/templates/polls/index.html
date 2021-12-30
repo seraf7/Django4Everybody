@@ -1,0 +1,22 @@
+<!--Se comprieba que la lista de preguntas contenga elementos-->
+{% if lista_preguntas %}
+    <ul>
+        <!--Se recorre la lista de preguntas agregando un nuevo elemento
+        en la pantalla cada vez-->
+        {% for question in lista_preguntas %}
+            <li>
+                <!--Se crea un enlace para ir a los detalles de la pregunta
+                <a href="/polls/{{ question.id }}/">
+                -->
+                <a href="{% url 'polls:detail' question.id %}">
+                    {{ question.question_text }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>
+        No hay preguntas disponibles
+    </p>
+{% endif %}
+<p>Para validación: 4b73c045</p>

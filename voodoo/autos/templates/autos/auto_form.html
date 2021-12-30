@@ -1,0 +1,21 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+    <h1>Registro de Automóviles</h1>
+
+    <!-- Crea un nuevo formulario -->
+    <form method="post">
+        {% csrf_token %}
+        <!-- Despliega formulario como una tabla -->
+        <table>
+            {{ form.as_table }}
+        </table>
+
+        <input type="submit" value="Submit">
+        <!--Direcciona al listado de autos-->
+        <input type="submit" value="Cancel"
+            onclick="window.location='{% url 'autos:all' %}' ; return false;">
+    </form>
+
+{% endblock content %}

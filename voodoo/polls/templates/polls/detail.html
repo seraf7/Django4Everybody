@@ -1,0 +1,34 @@
+<!--Titulo con la pregunta-->
+<h1>{{ question.question_text }}</h1>
+
+<!--Se valida si existe algún error al obtener detalles-->
+{% if error_message %}
+    <p><strong>
+        {{ error_message }}
+    </strong></p>
+{% endif %}
+
+<!--Se indica la creación de un formulario que usará POST-->
+<form action="{% url 'polls:vote' question.id %}"
+method="post">
+    <!--Indica manejar un token de seguridad-->
+    {% csrf_token %}
+
+    <!--Se recorre la lista de respuestas-->
+    {% for choice in question.choice_set.all %}
+        <!--Se crea un nuevo botón de selección por cada elemento-->
+        <input type="radio" name="choice"
+        id="choice{{ forloop.counter }}"
+        value="{{ choice.id }}">
+
+        <!--Indica la etiqueta para el botón-->
+        <label for="choice{{ forloop.counter }}">
+            {{ choice.choice_text }}
+        </label><br>
+    {% endfor %}
+
+    <!--Botón de envío del formulario-->
+    <input type="submit" value="Vote">
+</form>
+
+<p>Para validación: 4b73c045</p>

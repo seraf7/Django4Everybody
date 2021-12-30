@@ -1,0 +1,23 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+
+    <!-- Imprime errores devueltos por el formulario -->
+    {% if form.errors %}
+        <p>
+            Your username and password didn't match. Please try again.
+        </p>
+    {% endif %}
+
+    <!-- Creación de formulario de registro -->
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <!-- Imprime el formulario -->
+        {{ form.as_p }}
+
+        <input type="submit" class="btn btn-primary" value="Login" />
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+{% endblock content %}
