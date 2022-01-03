@@ -1,7 +1,7 @@
-"""voodoo URL Configuration
+"""samples URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
+    https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -13,27 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
 from django.contrib import admin
 from django.urls import path, include
-
-# Biblioteca para funcionalidades del SO
-import os
-# Biblioteca para la creación de URL
+from django.conf import settings
 from django.conf.urls import url
-# Biblioteca para la visualización de archivos estáticos
+from django.contrib.auth import views as auth_views
 from django.views.static import serve
-# Biblioteca para usar vistas genericas
-from django.views.generic import TemplateView
-
-# Definición del directorio base
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Definición del sitio base
-SITE_ROOT = os.path.join(BASE_DIR, 'site')
 
 urlpatterns = [
-    # Ruta para la vista principal
-    path('', TemplateView.as_view(template_name='home/main.html')),
-    # Se añade la ruta de aplicación creada
+    path('', include('home.urls')),  # Change to ads.urls
+    # Se añade la ruta de aplicación creada de encuestas
     path('polls/', include('polls.urls')),
     # Ruta para aplicación de cookies y sesiones
     path('hello/', include('hello.urls')),
@@ -41,12 +31,41 @@ urlpatterns = [
     path('autos/', include('autos.urls')),
     # Ruta de la aplicación CRUD de gatos
     path('cats/', include('cats.urls')),
-    # Ruta para funcionalidades de sesión
-    path('accounts/', include('django.contrib.auth.urls')),
-    # Ruta del sitio de administración
-    path('admin/', admin.site.urls),
-    # Definición de un patrón de URL
-    url(r'^site/(?P<path>.*)$', serve,
-        {'document_root': SITE_ROOT, 'show_indexes': True},
-        name='site_path'),
+    path('admin/', admin.site.urls),  # Keep
+    path('accounts/', include('django.contrib.auth.urls')),  # Keep
+    url(r'^oauth/', include('social_django.urls', namespace='social')),  # Keep
 ]
+
+# Serve the static HTML
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+urlpatterns += [
+    url(r'^site/(?P<path>.*)$', serve,
+        {'document_root': os.path.join(BASE_DIR, 'site'),
+         'show_indexes': True},
+        name='site_path'
+        ),
+]
+
+# Serve the favicon - Keep for later
+urlpatterns += [
+    path('favicon.ico', serve, {
+            'path': 'favicon.ico',
+            'document_root': os.path.join(BASE_DIR, 'home/static'),
+        }
+    ),
+]
+
+# Switch to social login if it is configured - Keep for later
+try:
+    from . import github_settings
+    social_login = 'registration/login_social.html'
+    urlpatterns.insert(0,
+                       path('accounts/login/', auth_views.LoginView.as_view(template_name=social_login))
+                       )
+    print('Using', social_login, 'as the login template')
+except:
+    print('Using registration/login.html as the login template')
+
+# References
+
+# https://docs.djangoproject.com/en/3.0/ref/urls/#include
