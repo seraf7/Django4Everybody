@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'autos.apps.AutosConfig',
     # Aplicación CRUD de gatos
     'cats.apps.CatsConfig',
+    # Aplicación de anuncios
+    'ads.apps.AdsConfig',
 ]
 
 # When we get to crispy forms :)
