@@ -32,7 +32,7 @@ urlpatterns = [
     # Ruta de la aplicación CRUD de gatos
     path('cats/', include('cats.urls')),
     # Ruta para aplicación de anuncios
-    path('ads', include('ads.urls')),
+    path('ads/', include('ads.urls')),
     path('admin/', admin.site.urls),  # Keep
     path('accounts/', include('django.contrib.auth.urls')),  # Keep
     url(r'^oauth/', include('social_django.urls', namespace='social')),  # Keep

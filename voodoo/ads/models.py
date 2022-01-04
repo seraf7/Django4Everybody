@@ -9,7 +9,7 @@ class Ad(models.Model):
         validators = [MinLengthValidator(2, "Title must be greater than 2 characters")]
     )
     price = models.DecimalField(max_digits=7, decimal_places=2, null=True)
-    text = models.TexField()
+    text = models.TextField()
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # Establece atomáticamente fecha/hora al crear el objeto
     created_at = models.DateTimeField(auto_now_add=True)

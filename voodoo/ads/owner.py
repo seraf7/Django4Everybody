@@ -42,7 +42,7 @@ class OwnerUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         print('Llamada a  Update.get_queryset')
         # Obtiene todos los registros con el método del padre
-        qs = super(OwnerUpdateView, self).get_queryset
+        qs = super(OwnerUpdateView, self).get_queryset()
         # Devuelve resultados filtrdos con el usuario
         return qs.filter(owner=self.request.user)
 
@@ -57,7 +57,7 @@ class OwnerDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         print('Llamada a  Update.get_queryset')
         # Obtiene todos los registros con el método del padre
-        qs = super(OwnerUpdateView, self).get_queryset
+        qs = super(OwnerDeleteView, self).get_queryset()
         # Devuelve resultados filtrdos con el usuario
         return qs.filter(owner=self.request.user)
 
