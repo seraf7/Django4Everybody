@@ -1,0 +1,15 @@
+{% extends "base_menu.html" %}
+
+{% block content %}
+    <h1>Delete an Ad</h1>
+
+    <p>Do you want to delete the ad: {{ ad.title }}</p>
+
+    <!-- Crea un nuevo formulario -->
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes, delete.">
+        <input type="submit" value="Cancel"
+            onclick="window.location.href='{% url 'ads:all' %}'; return false;">
+    </form>
+{% endblock %}

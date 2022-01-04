@@ -1,0 +1,25 @@
+{% extends "base_menu.html" %}
+
+{% block content %}
+    <h1>Ads</h1>
+
+    <!-- Verifica si hay anuncios registrados -->
+    {% if ad_list %}
+        <ul>
+            <!-- Imprime listado de anuncios -->
+            {% for ad in ad_list %}
+                <li>
+                    <a href="{% url 'ads:ad_detail' ad.id %}">{{ ad.title }}</a>
+                    <!-- Verifica si el anuncio pertenece al usuario en sesión -->
+                    {% if ad.owner == user %}
+                        (<a href="{% url 'ads:ad_update' ad.id %}">Edit</a> |
+                        <a href="{% url 'ads:ad_delete' ad.id %}">Delete</a>)
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay anuncios en la base de datos</p>
+    {% endif %}
+
+{% endblock %}

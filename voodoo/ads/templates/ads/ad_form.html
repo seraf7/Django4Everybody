@@ -1,0 +1,18 @@
+{% extends "base_menu.html" %}
+
+<!-- Carga el uso de las etiquetas de crispy -->
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Ad Form</h1>
+    <!-- Crea un nuevo formulario -->
+    <form method="post">
+        {% csrf_token %}
+        <!-- Carga campos del formulario -->
+        {{ form|crispy}}
+
+        <input type="submit" value="Submit">
+        <input type="submit" value="Cancel"
+            onclick="window.location.href='{% url 'ads:all' %}'; return false;">
+    </form>
+{% endblock %}
