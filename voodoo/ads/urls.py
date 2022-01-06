@@ -12,10 +12,10 @@ urlpatterns = [
     path('ad/create/',
         views.AdCreateView.as_view(success_url=reverse_lazy('ads:all')),
         name='ad_create'),
-    path('ad/<int:pk>/update/',
+    path('ad/<int:pk>/update',
         views.AdUpdateView.as_view(success_url=reverse_lazy('ads:all')),
         name='ad_update'),
-    path('ad/<int:pk>/delete/',
+    path('ad/<int:pk>/delete',
         views.AdDeleteView.as_view(success_url=reverse_lazy('ads:all')),
         name='ad_delete'),
 ]
