@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Extensiones de Django
+    'django_extensions',
+    # aplicación UNESCO
+    'unesco.apps.UnescoConfig',
 ]
 
 MIDDLEWARE = [
