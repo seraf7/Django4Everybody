@@ -16,6 +16,11 @@ class Ad(models.Model):
     # Guarda atomáticamente fecha/hora de la ultima modificación
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Campos para guardar imagen
+    picture = models.BinaryField(null=True, editable=True)
+    content_type = models.CharField(max_length=256, null=True,
+        help_text='The MIMEType of the file')
+
     # Método para imprimir objeto como cadena
     def __str__(self):
         return self.title
