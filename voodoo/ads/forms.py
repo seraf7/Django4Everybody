@@ -10,8 +10,9 @@ class CreateForm(forms.ModelForm):
     max_upload_limit_text = naturalsize(max_upload_limit)
 
     # Definición de campo para cargar archivo
-    picture = forms.FileField(required=False, upload_field_name='picture',
+    picture = forms.FileField(required=False, \
         label='File to Upload <= ' + max_upload_limit_text)
+    upload_field_name = 'picture'
 
     # Clase de metadatos para crear el formulario
     class Meta:
