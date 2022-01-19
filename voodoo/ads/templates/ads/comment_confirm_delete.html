@@ -1,0 +1,15 @@
+{% extends "base_menu.html" %}
+
+{% block content %}
+    <h1>Delete a Comment</h1>
+
+    <p>Do you want to delete the comment: {{ comment.text }}</p>
+
+    <!-- Crea un nuevo formulario -->
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes, delete.">
+        <input type="submit" value="Cancel"
+            onclick="window.location.href='{% url 'ads:ad_detail' comment.ad.id %}'; return false;">
+    </form>
+{% endblock %}

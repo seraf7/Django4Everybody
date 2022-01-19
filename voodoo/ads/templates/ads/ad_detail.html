@@ -56,12 +56,44 @@
 
     <!-- Verifica si existe una imagen para mostrar-->
     {% if ad.content_type %}
-        <img style="float: right; max-width: 50%;"
+        <img style="float: right; max-width: 30%;"
             src="{% url 'ads:ad_picture' ad.id%}"
-            onclick="document.getElementById('overlay').style.display = 'block';">
+            onclick="document.getElementById('overlay').style.display = 'inline-block';">
     {% endif %}
 
     <p>
         <a href="{% url 'ads:all' %}">All ads</a>
     </p>
+
+    <!-- Verifica si el usuario ha iniciado sesión -->
+    {% if user.is_authenticated %}
+        <span style="float: left; min-width: 60%; max-width: 100%">
+            <!-- Creación de formulario para comentarios -->
+            {% load crispy_forms_tags %}
+            <form method="post"
+                action="{% url 'ads:ad_comment_create' ad.id %}">
+                {% csrf_token %}
+                {{ comment_form|crispy }}
+
+                <input type="submit" value="Submit">
+                <input type="submit" value="All Ads"
+                    onclick="window.location.href='{% url 'ads:all' %}'; return false;">
+            </form>
+        </span>
+    {% endif %}
+
+    <!-- Imprime lista de comentarios -->
+    <br clear="all">
+    {% for comment in comments %}
+        <p>
+            {{ comment.text }} ({{ comment.updated_at|naturaltime }})
+
+            <!-- Verifica si es dueño del comentario -->
+            {% if user == comment.owner %}
+                <a href="{% url 'ads:ad_comment_delete' comment.id %}">
+                    <i class="fa fa-trash"></i>
+                </a>
+            {% endif %}
+        </p>
+    {% endfor %}
 {% endblock %}
