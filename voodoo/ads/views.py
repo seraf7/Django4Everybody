@@ -1,15 +1,15 @@
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ads.models import Ad
+from ads.models import Ad, Comment
 from .owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
 
-from ads.forms import CreateForm
+from ads.forms import CreateForm, CommentForm
 
 # Vista para listar los anuncios
 class AdListView(OwnerListView):
@@ -19,6 +19,20 @@ class AdListView(OwnerListView):
 # Vista de detalles del anuncio
 class AdDetailView(OwnerDetailView):
     model = Ad
+    template_name = 'ads/ad_detail.html'
+
+    # Sobreescritura del método get
+    def get(self, request, pk):
+        # Obtiene el anuncio solicitado
+        ad = Ad.objects.get(id=pk)
+        # Obtiene los comentarios del anuncio, ordenados por el mas reciente
+        comments = Comment.objects.filter(ad=ad).order_by('-updated_at')
+        # Crea objeto de formulario de comentarios
+        comment_form = CommentForm()
+        # Creación del contexto
+        ctx = {'ad': ad, 'comments': comments, 'comment_form': comment_form}
+        # Devuelve respuesta a renderizar
+        return render(request, self.template_name, ctx)
 
 # Vista de creación de un anuncio, requiere inicio de sesión
 class AdCreateView(LoginRequiredMixin, View):
@@ -99,3 +113,28 @@ def stream_file(request, pk):
     response.write(ad.picture)
     # Envía la respuesta generada
     return response
+
+# Vista para la creación de un comentario, requiere inicio de sesión
+class CommentCreateView(LoginRequiredMixin, View):
+    # Sobreescritura del método POST
+    def post(self, request, pk):
+        # Obtiene el anuncio con id recibido
+        ad = get_object_or_404(Ad, id=pk)
+        # Crea objeto con datos del formulario recibido
+        comment = Comment(text=request.POST['comment'],
+            owner=request.user, ad=ad)
+        # Guarda en la BD
+        comment.save()
+        # Redirecciona a la página de detalles del anuncio
+        return redirect(reverse('ads:ad_detail', args=[pk]))
+
+# Vista para borrar un comentario del autor en sesión
+class CommentDeleteView(OwnerDeleteView):
+    model = Comment
+
+    # Sobreescritura del método para ir a URL de éxito
+    def get_success_url(self):
+        # Obtiene el anuncio actual
+        ad = self.object.ad
+        # Redirecciona al anuncio del ID indicado
+        return reverse('ads:ad_detail', args=[ad.id])

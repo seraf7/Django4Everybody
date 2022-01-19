@@ -3,7 +3,10 @@ from ads.models import Ad
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from ads.humanize import naturalsize
 
-# Definición de clase para un formulario
+from django.core.exceptions import ValidationError
+from django.core import validators
+
+# Definición de clase para un formulario de anuncio
 class CreateForm(forms.ModelForm):
     # Cálculo del tamaño límite de archivos
     max_upload_limit = 2 * 1024 * 1024
@@ -56,3 +59,8 @@ class CreateForm(forms.ModelForm):
             instance.save()
 
         return instance
+
+# Definición de clase para un comentario
+class CommentForm(forms.Form):
+    comment = forms.CharField(required=True, max_length=500, min_length=3,
+        strip=True)
