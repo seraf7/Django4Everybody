@@ -5,8 +5,8 @@
 
 {% block content %}
     <h1>Ad Form</h1>
-    <!-- Crea un nuevo formulario -->
-    <form method="post">
+    <!-- Crea un nuevo formulario con carga de archivos encriptados -->
+    <form method="post" id="upload_form" enctype="multipart/form-data">
         {% csrf_token %}
         <!-- Carga campos del formulario -->
         {{ form|crispy}}
@@ -15,4 +15,27 @@
         <input type="submit" value="Cancel"
             onclick="window.location.href='{% url 'ads:all' %}'; return false;">
     </form>
+
+    <!-- Bloque de JS para envio del formulario con ajax -->
+    <script type="text/javascript">
+        // Función para botón submit del formulario
+        $(#upload_form).submit(function() {
+            // Impresión en consola
+            console.log('Checking file size');
+
+            // Comprobación de soporte de archivos en el navegador
+            if(window.File && window.FileReader && window.FileList && window.Blob){
+                // Recupera contenido de campo de archivo
+                var file = $('#id_{{ form.upload_field_name }}')[0].files[0];
+
+                // Comprobación del tamaño
+                if(file && file.size > {{ form.max_upload_limit }}){
+                    // Despliegue alerta en el navegador
+                    alert("File " + file.name + " of type " + file.type +
+                        " must be < {{ form.max_upload_limit_text }}");
+                    return false;
+                }
+            }
+        });
+    </script>
 {% endblock %}
