@@ -86,3 +86,16 @@ class AdUpdateView(LoginRequiredMixin, View):
 
 class AdDeleteView(OwnerDeleteView):
     model = Ad
+
+# Método para envío de imagenes
+def stream_file(request, pk):
+    # Obtiene objeto con ID indicado
+    ad = get_object_or_404(Ad, id=pk)
+    # Construcción de respuesta HTTP
+    response = HttpResponse()
+    response['Content-Type'] = ad.content_type
+    response['Content-Length'] = len(ad.picture)
+    # Escribe imagen en la respuesta
+    response.write(ad.picture)
+    # Envía la respuesta generada
+    return response
