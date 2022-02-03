@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from ads.models import Ad, Comment
+from ads.models import Ad, Comment, Fav
 from .owner import OwnerListView, OwnerDetailView, OwnerCreateView, OwnerUpdateView, OwnerDeleteView
 
 from ads.forms import CreateForm, CommentForm
@@ -15,6 +17,25 @@ from ads.forms import CreateForm, CommentForm
 class AdListView(OwnerListView):
     # Define el modelo a renderizar
     model = Ad
+    template_name = 'ads/ad_list.html'
+
+
+    # Sobreescritura para solicitudes GET
+    def get(self, request):
+        # Obtiene todos los anuncios
+        ad_list = Ad.objects.all()
+        favorites = []
+
+        # Valida si el usuario ha iniciado sesión
+        if request.user.is_authenticated:
+            # Recupera el diccionario los ID de anuncios favoritos
+            rows = request.user.favorite_ads.values('id')
+            # Crea una lista de los ID recuperados
+            favorites = [row['id'] for row in rows]
+
+        # Crea el contexto
+        ctx = {'ad_list': ad_list, 'favorites': favorites}
+        return render(request, self.template_name, ctx)
 
 # Vista de detalles del anuncio
 class AdDetailView(OwnerDetailView):
@@ -138,3 +159,36 @@ class CommentDeleteView(OwnerDeleteView):
         ad = self.object.ad
         # Redirecciona al anuncio del ID indicado
         return reverse('ads:ad_detail', args=[ad.id])
+
+# Vista para añadir favoritos, se ignora el token csrf y se gestionan
+# las solicitudes recibidas por su tipo
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    # Método para atender solicitud POST
+    def post(self, request, pk):
+        # Obtiene el anuncio indicado
+        ad = get_object_or_404(Ad, id=pk)
+        # Crear registro en tabla de favoritos
+        fav = Fav(user=request.user, ad=ad)
+
+        try:
+            # Intenta guardar el registro
+            fav.save()
+        except IntegrityError as e:
+            # No guarda en caso de duplicidad
+            pass
+
+        return HttpResponse()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        ad = get_object_or_404(Ad, id=pk)
+        try:
+            # Intenta borrar registro de tabla de favoritos
+            fav = Fav.objects.get(user=request.user, ad=ad).delete()
+        except Fav.DoesNotExist as e:
+            # El registro no existia en la tabla
+            pass
+
+        return HttpResponse()
