@@ -16,6 +16,10 @@ class Ad(models.Model):
     # Guarda atomáticamente fecha/hora de la ultima modificación
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Relación muchos a muchos para marcar favoritos
+    favorites = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Fav',
+        related_name='favorite_ads')
+
     # Campos para guardar imagen
     picture = models.BinaryField(null=True, editable=True)
     content_type = models.CharField(max_length=256, null=True,
@@ -49,3 +53,17 @@ class Comment(models.Model):
         else:
             # Devuelve primeros 11 caracteres del comentario
             return self.text[:11] + '...'
+
+# Clase para guardar relación de anuncios favoritos
+class Fav(models.Model):
+    # Definición de llaves foráneas
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    # Definición de campos únicos
+    class Meta:
+        unique_together = ('ad', 'user')
+
+    # Representación como cadena
+    def __str__(self):
+        return "%s likes %s"%(self.user.username, self.ad.title[:10])
