@@ -52,6 +52,19 @@
 
     <p>{{ ad.text }}</p>
 
+    <!-- Valida si existen TAGS en el anuncio -->
+    {% if ad.tags.all %}
+        <p>Tags:
+            <!-- Ciclo para imprimir TAGS -->
+            {% for tag in ad.tags.all %}
+                <span style="border:1px grey solid; background-color: LightGreen;
+                margin-right:5px;">
+                    {{ tag }}
+                </span>
+            {% endfor %}
+        </p>
+    {% endif %}
+
     <p>Price: ${{ ad.price }}</p>
 
     <!-- Verifica si existe una imagen para mostrar-->

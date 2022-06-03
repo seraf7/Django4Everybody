@@ -26,13 +26,14 @@ class AdListView(OwnerListView):
         favorites = []
 
         # Recupera valores recibidos en solicitud GET
-        strval = request.GET.get("buscar", False)
+        strval = request.GET.get("search", False)
 
         # Valida si hay un valor de busqueda
         if strval:
             # Crea filtros con valor de busqueda
             query = Q(title__icontains=strval)
             query.add(Q(text__icontains=strval), Q.OR)
+            query.add(Q(tags__name__in=[strval]), Q.OR)
             # Recupera lista de anuncios filtrada
             ad_list = Ad.objects.filter(query)
         else:
@@ -100,6 +101,9 @@ class AdCreateView(LoginRequiredMixin, View):
         ad.owner = self.request.user
         # Guarda objeto en la BD
         ad.save()
+        # Guarda la relación de TAGS del anuncio
+        form.save_m2m()
+
         # Redirije a la URL de éxito
         return redirect(self.success_url)
 
@@ -129,6 +133,9 @@ class AdUpdateView(LoginRequiredMixin, View):
         # Actualiza cambios en la BD
         ad = form.save(commit=False)
         ad.save()
+
+        # Guarda relación de TAGS del anuncio
+        form.save_m2m()
 
         return redirect(self.success_url)
 
