@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
+from django.db.models import Q
+
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from ads.models import Ad, Comment, Fav
@@ -19,12 +21,23 @@ class AdListView(OwnerListView):
     model = Ad
     template_name = 'ads/ad_list.html'
 
-
     # Sobreescritura para solicitudes GET
     def get(self, request):
-        # Obtiene todos los anuncios
-        ad_list = Ad.objects.all()
         favorites = []
+
+        # Recupera valores recibidos en solicitud GET
+        strval = request.GET.get("buscar", False)
+
+        # Valida si hay un valor de busqueda
+        if strval:
+            # Crea filtros con valor de busqueda
+            query = Q(title__icontains=strval)
+            query.add(Q(text__icontains=strval), Q.OR)
+            # Recupera lista de anuncios filtrada
+            ad_list = Ad.objects.filter(query)
+        else:
+            # Obtiene todos los anuncios
+            ad_list = Ad.objects.all()
 
         # Valida si el usuario ha iniciado sesión
         if request.user.is_authenticated:
