@@ -35,7 +35,7 @@ class AdListView(OwnerListView):
             query.add(Q(text__icontains=strval), Q.OR)
             query.add(Q(tags__name__in=[strval]), Q.OR)
             # Recupera lista de anuncios filtrada
-            ad_list = Ad.objects.filter(query)
+            ad_list = Ad.objects.filter(query).distinct()
         else:
             # Obtiene todos los anuncios
             ad_list = Ad.objects.all()
