@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.conf import settings
+from taggit.managers import TaggableManager
 
 # Clase para modelar un anuncio
 class Ad(models.Model):
@@ -28,6 +29,9 @@ class Ad(models.Model):
     # Relación M:M para añadir comentarios, usa la entidad Comment
     comments = models.ManyToManyField(settings.AUTH_USER_MODEL,
         through='Comment', related_name='comments_owner')
+
+    # Campo para TAGS en los anuncios, no es obligatorio
+    tags = TaggableManager(blank=True)
 
     # Método para imprimir objeto como cadena
     def __str__(self):

@@ -20,7 +20,7 @@ class CreateForm(forms.ModelForm):
     # Clase de metadatos para crear el formulario
     class Meta:
         model = Ad
-        fields = ['title', 'price', 'text', 'picture']
+        fields = ['title', 'price', 'text', 'tags','picture']
 
     # Sobreescritura de método para validar y obtener datos del formulario
     def clean(self):
@@ -57,6 +57,8 @@ class CreateForm(forms.ModelForm):
         # Valida estado del commit
         if commit:
             instance.save()
+            # Guarda los TAGS del formulario
+            self.save_m2m()
 
         return instance
 
